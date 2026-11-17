@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="def_P_ASIS" targetNamespace="http://zelabairro/rpa">
+ <collaboration id="col_P_ASIS"><participant id="P_ASIS" name="ZelaBairro - Encaminhamento de ocorrências ao SP156 (AS-IS)" processRef="P_ASIS_proc"/></collaboration>
+ <process id="P_ASIS_proc" isExecutable="false">
+  <laneSet id="ls_P_ASIS">
+   <lane id="L1" name="Operador do ZelaBairro">
+    <flowNodeRef>S</flowNodeRef>
+    <flowNodeRef>T1</flowNodeRef>
+    <flowNodeRef>T2</flowNodeRef>
+    <flowNodeRef>G1</flowNodeRef>
+    <flowNodeRef>T3</flowNodeRef>
+    <flowNodeRef>G2</flowNodeRef>
+    <flowNodeRef>T4</flowNodeRef>
+    <flowNodeRef>T5</flowNodeRef>
+    <flowNodeRef>T6</flowNodeRef>
+    <flowNodeRef>T7</flowNodeRef>
+    <flowNodeRef>T8</flowNodeRef>
+    <flowNodeRef>T9</flowNodeRef>
+    <flowNodeRef>E1</flowNodeRef>
+    <flowNodeRef>T10</flowNodeRef>
+    <flowNodeRef>E2</flowNodeRef>
+    <flowNodeRef>T11</flowNodeRef>
+    <flowNodeRef>E3</flowNodeRef>
+   </lane>
+  </laneSet>
+  <startEvent id="S" name="Ocorrência pendente">
+   <outgoing>F1</outgoing>
+  </startEvent>
+  <task id="T1" name="Localizar a ocorrência na planilha exportada do painel">
+   <incoming>F1</incoming>
+   <outgoing>F2</outgoing>
+  </task>
+  <task id="T2" name="Conferir campos obrigatórios (local, categoria e descrição)">
+   <incoming>F2</incoming>
+   <outgoing>F3</outgoing>
+  </task>
+  <exclusiveGateway id="G1" name="Dados completos?">
+   <incoming>F3</incoming>
+   <outgoing>F4</outgoing>
+   <outgoing>F13</outgoing>
+  </exclusiveGateway>
+  <task id="T3" name="Verificar se já existe ocorrência no mesmo local e categoria">
+   <incoming>F4</incoming>
+   <outgoing>F5</outgoing>
+  </task>
+  <exclusiveGateway id="G2" name="Ocorrência duplicada?">
+   <incoming>F5</incoming>
+   <outgoing>F6</outgoing>
+   <outgoing>F15</outgoing>
+  </exclusiveGateway>
+  <task id="T4" name="Acessar o Portal SP156 e fazer login">
+   <incoming>F6</incoming>
+   <outgoing>F7</outgoing>
+  </task>
+  <task id="T5" name="Selecionar o serviço correspondente à categoria">
+   <incoming>F7</incoming>
+   <outgoing>F8</outgoing>
+  </task>
+  <task id="T6" name="Preencher endereço, descrição e anexar a foto">
+   <incoming>F8</incoming>
+   <outgoing>F9</outgoing>
+  </task>
+  <task id="T7" name="Enviar a solicitação">
+   <incoming>F9</incoming>
+   <outgoing>F10</outgoing>
+  </task>
+  <task id="T8" name="Copiar o número de protocolo">
+   <incoming>F10</incoming>
+   <outgoing>F11</outgoing>
+  </task>
+  <task id="T9" name="Registrar o protocolo e atualizar o status para &quot;encaminhada&quot;">
+   <incoming>F11</incoming>
+   <outgoing>F12</outgoing>
+  </task>
+  <endEvent id="E1" name="Ocorrência encaminhada">
+   <incoming>F12</incoming>
+  </endEvent>
+  <task id="T10" name="Marcar a ocorrência como &quot;aguardando cidadão&quot;">
+   <incoming>F13</incoming>
+   <outgoing>F14</outgoing>
+  </task>
+  <endEvent id="E2" name="Ocorrência aguardando cidadão">
+   <incoming>F14</incoming>
+  </endEvent>
+  <task id="T11" name="Marcar como &quot;duplicada&quot; com o protocolo existente">
+   <incoming>F15</incoming>
+   <outgoing>F16</outgoing>
+  </task>
+  <endEvent id="E3" name="Ocorrência duplicada">
+   <incoming>F16</incoming>
+  </endEvent>
+  <sequenceFlow id="F1" name="" sourceRef="S" targetRef="T1"/>
+  <sequenceFlow id="F2" name="" sourceRef="T1" targetRef="T2"/>
+  <sequenceFlow id="F3" name="" sourceRef="T2" targetRef="G1"/>
+  <sequenceFlow id="F4" name="Sim" sourceRef="G1" targetRef="T3"/>
+  <sequenceFlow id="F5" name="" sourceRef="T3" targetRef="G2"/>
+  <sequenceFlow id="F6" name="Não" sourceRef="G2" targetRef="T4"/>
+  <sequenceFlow id="F7" name="" sourceRef="T4" targetRef="T5"/>
+  <sequenceFlow id="F8" name="" sourceRef="T5" targetRef="T6"/>
+  <sequenceFlow id="F9" name="" sourceRef="T6" targetRef="T7"/>
+  <sequenceFlow id="F10" name="" sourceRef="T7" targetRef="T8"/>
+  <sequenceFlow id="F11" name="" sourceRef="T8" targetRef="T9"/>
+  <sequenceFlow id="F12" name="" sourceRef="T9" targetRef="E1"/>
+  <sequenceFlow id="F13" name="Não" sourceRef="G1" targetRef="T10"/>
+  <sequenceFlow id="F14" name="" sourceRef="T10" targetRef="E2"/>
+  <sequenceFlow id="F15" name="Sim" sourceRef="G2" targetRef="T11"/>
+  <sequenceFlow id="F16" name="" sourceRef="T11" targetRef="E3"/>
+ </process>
+ <bpmndi:BPMNDiagram id="dia_P_ASIS"><bpmndi:BPMNPlane id="pl_P_ASIS" bpmnElement="col_P_ASIS">
+  <bpmndi:BPMNShape id="P_ASIS_di" bpmnElement="P_ASIS" isHorizontal="true"><dc:Bounds x="20" y="60" width="2200" height="330"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="L1_di" bpmnElement="L1" isHorizontal="true"><dc:Bounds x="50" y="60" width="2170" height="330"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="S_di" bpmnElement="S"><dc:Bounds x="142" y="132" width="36" height="36"/><bpmndi:BPMNLabel><dc:Bounds x="105" y="174" width="110" height="32"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="T1_di" bpmnElement="T1"><dc:Bounds x="225" y="112" width="130" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="T2_di" bpmnElement="T2"><dc:Bounds x="395" y="112" width="130" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="G1_di" bpmnElement="G1"><dc:Bounds x="605" y="125" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="580" y="86" width="100" height="30"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="T3_di" bpmnElement="T3"><dc:Bounds x="695" y="112" width="130" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="G2_di" bpmnElement="G2"><dc:Bounds x="905" y="125" width="50" height="50"/><bpmndi:BPMNLabel><dc:Bounds x="880" y="86" width="100" height="30"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="T4_di" bpmnElement="T4"><dc:Bounds x="995" y="112" width="130" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="T5_di" bpmnElement="T5"><dc:Bounds x="1165" y="112" width="130" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="T6_di" bpmnElement="T6"><dc:Bounds x="1335" y="112" width="130" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="T7_di" bpmnElement="T7"><dc:Bounds x="1505" y="112" width="130" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="T8_di" bpmnElement="T8"><dc:Bounds x="1675" y="112" width="130" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="T9_di" bpmnElement="T9"><dc:Bounds x="1845" y="112" width="130" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="E1_di" bpmnElement="E1"><dc:Bounds x="2062" y="132" width="36" height="36"/><bpmndi:BPMNLabel><dc:Bounds x="2025" y="174" width="110" height="32"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="T10_di" bpmnElement="T10"><dc:Bounds x="565" y="262" width="130" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="E2_di" bpmnElement="E2"><dc:Bounds x="742" y="282" width="36" height="36"/><bpmndi:BPMNLabel><dc:Bounds x="705" y="324" width="110" height="32"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="T11_di" bpmnElement="T11"><dc:Bounds x="865" y="262" width="130" height="76"/></bpmndi:BPMNShape>
+  <bpmndi:BPMNShape id="E3_di" bpmnElement="E3"><dc:Bounds x="1042" y="282" width="36" height="36"/><bpmndi:BPMNLabel><dc:Bounds x="1005" y="324" width="110" height="32"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+  <bpmndi:BPMNEdge id="F1_di" bpmnElement="F1"><di:waypoint x="178" y="150"/><di:waypoint x="225" y="150"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F2_di" bpmnElement="F2"><di:waypoint x="355" y="150"/><di:waypoint x="395" y="150"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F3_di" bpmnElement="F3"><di:waypoint x="525" y="150"/><di:waypoint x="605" y="150"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F4_di" bpmnElement="F4"><di:waypoint x="655" y="150"/><di:waypoint x="695" y="150"/><bpmndi:BPMNLabel><dc:Bounds x="661" y="130" width="28" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F5_di" bpmnElement="F5"><di:waypoint x="825" y="150"/><di:waypoint x="905" y="150"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F6_di" bpmnElement="F6"><di:waypoint x="955" y="150"/><di:waypoint x="995" y="150"/><bpmndi:BPMNLabel><dc:Bounds x="961" y="130" width="28" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F7_di" bpmnElement="F7"><di:waypoint x="1125" y="150"/><di:waypoint x="1165" y="150"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F8_di" bpmnElement="F8"><di:waypoint x="1295" y="150"/><di:waypoint x="1335" y="150"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F9_di" bpmnElement="F9"><di:waypoint x="1465" y="150"/><di:waypoint x="1505" y="150"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F10_di" bpmnElement="F10"><di:waypoint x="1635" y="150"/><di:waypoint x="1675" y="150"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F11_di" bpmnElement="F11"><di:waypoint x="1805" y="150"/><di:waypoint x="1845" y="150"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F12_di" bpmnElement="F12"><di:waypoint x="1975" y="150"/><di:waypoint x="2062" y="150"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F13_di" bpmnElement="F13"><di:waypoint x="630" y="175"/><di:waypoint x="630" y="262"/><bpmndi:BPMNLabel><dc:Bounds x="638" y="183" width="28" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F14_di" bpmnElement="F14"><di:waypoint x="695" y="300"/><di:waypoint x="742" y="300"/></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F15_di" bpmnElement="F15"><di:waypoint x="930" y="175"/><di:waypoint x="930" y="262"/><bpmndi:BPMNLabel><dc:Bounds x="938" y="183" width="28" height="14"/></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+  <bpmndi:BPMNEdge id="F16_di" bpmnElement="F16"><di:waypoint x="995" y="300"/><di:waypoint x="1042" y="300"/></bpmndi:BPMNEdge>
+ </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</definitions>
