@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Portal de Zeladoria - Ambiente de Demonstração</title>
+<style>
+  body { font-family: Arial, Helvetica, sans-serif; margin: 0; background: #f2f2f2; color: #222; }
+  .topo { background: #1f3a5f; color: #fff; padding: 14px 24px; }
+  .topo h1 { margin: 0; font-size: 20px; }
+  .topo p { margin: 4px 0 0; font-size: 13px; }
+  .aviso { background: #fff3cd; border-bottom: 1px solid #e0c97a; padding: 8px 24px; font-size: 13px; }
+  .caixa { background: #fff; max-width: 560px; margin: 30px auto; padding: 24px 28px; border: 1px solid #ccc; }
+  h2 { font-size: 18px; margin-top: 0; }
+  label { display: block; margin-top: 14px; font-weight: bold; font-size: 14px; }
+  input, select, textarea { width: 100%; padding: 8px; margin-top: 4px; font-size: 14px; box-sizing: border-box; border: 1px solid #999; font-family: inherit; }
+  textarea { height: 90px; resize: vertical; }
+  button { margin-top: 20px; padding: 10px 20px; font-size: 14px; background: #1f3a5f; color: #fff; border: none; cursor: pointer; }
+  .erro { color: #b00020; font-size: 13px; margin-top: 10px; min-height: 16px; }
+  .protocolo { font-size: 26px; font-weight: bold; margin: 10px 0 18px; }
+  .oculto { display: none; }
+  .usuario { float: right; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <h1>Portal de Zeladoria</h1>
+  <p>Solicitação de serviços de manutenção urbana</p>
+</div>
+<div class="aviso">
+  Ambiente de demonstração (GS FIAP 2026 - ZelaBairro). Esta página reproduz os campos do formulário de zeladoria do Portal SP156
+  para testes do robô. Nenhuma solicitação é enviada à Prefeitura.
+</div>
+
+<!-- Tela 1: login -->
+<div class="caixa" id="telaLogin">
+  <h2>Acesso</h2>
+  <label for="usuario">E-mail</label>
+  <input type="text" id="usuario" name="usuario" autocomplete="off">
+  <label for="senha">Senha</label>
+  <input type="password" id="senha" name="senha">
+  <button type="button" id="btnEntrar">Entrar</button>
+  <div class="erro" id="erroLogin"></div>
+</div>
+
+<!-- Tela 2: nova solicitação -->
+<div class="caixa oculto" id="telaSolicitacao">
+  <span class="usuario" id="usuarioLogado"></span>
+  <h2>Nova solicitação</h2>
+  <label for="servico">Serviço</label>
+  <select id="servico" name="servico">
+    <option value="">Selecione</option>
+    <option>Sinalização de trânsito - placa danificada</option>
+    <option>Iluminação pública - lâmpada apagada</option>
+    <option>Calçada - buraco ou desnível</option>
+    <option>Árvore - poda ou remoção</option>
+    <option>Mobiliário urbano - banco, lixeira ou abrigo</option>
+  </select>
+  <label for="endereco">Endereço da ocorrência</label>
+  <input type="text" id="endereco" name="endereco" autocomplete="off">
+  <label for="descricao">Descrição do problema</label>
+  <textarea id="descricao" name="descricao"></textarea>
+  <label for="foto">Foto (nome do arquivo ou link)</label>
+  <input type="text" id="foto" name="foto" autocomplete="off">
+  <button type="button" id="btnEnviar">Enviar solicitação</button>
+  <div class="erro" id="erroSolicitacao"></div>
+</div>
+
+<!-- Tela 3: confirmação -->
+<div class="caixa oculto" id="telaConfirmacao">
+  <h2>Solicitação registrada</h2>
+  <p>Guarde o número do protocolo para acompanhar a solicitação.</p>
+  <div class="protocolo">Protocolo: <span id="protocolo"></span></div>
+  <button type="button" id="btnNovaSolicitacao">Nova solicitação</button>
+</div>
+
+<script>
+  // Usuário de teste do ambiente de demonstração
+  var USUARIO_TESTE = "operacao@zelabairro.com";
+  var SENHA_TESTE = "zela2026";
+
+  function mostrar(id) {
+    ["telaLogin", "telaSolicitacao", "telaConfirmacao"].forEach(function (t) {
+      document.getElementById(t).classList.add("oculto");
+    });
+    document.getElementById(id).classList.remove("oculto");
+  }
+
+  function lerSessao(chave) {
+    try { return sessionStorage.getItem(chave); } catch (e) { return null; }
+  }
+  function gravarSessao(chave, valor) {
+    try { sessionStorage.setItem(chave, valor); } catch (e) { }
+  }
+
+  // Número de protocolo sequencial (guardado no navegador)
+  function proximoProtocolo() {
+    var n = 2100;
+    try {
+      n = parseInt(localStorage.getItem("ultimoProtocolo") || "2100", 10) + 1;
+      localStorage.setItem("ultimoProtocolo", String(n));
+    } catch (e) {
+      n = 2100 + Math.floor(Math.random() * 900);
+    }
+    return new Date().getFullYear() + "-000" + n;
+  }
+
+  function limparFormulario() {
+    document.getElementById("servico").value = "";
+    document.getElementById("endereco").value = "";
+    document.getElementById("descricao").value = "";
+    document.getElementById("foto").value = "";
+    document.getElementById("erroSolicitacao").textContent = "";
+  }
+
+  document.getElementById("btnEntrar").onclick = function () {
+    var u = document.getElementById("usuario").value.trim();
+    var s = document.getElementById("senha").value;
+    if (u === USUARIO_TESTE && s === SENHA_TESTE) {
+      gravarSessao("logado", u);
+      document.getElementById("usuarioLogado").textContent = u;
+      document.getElementById("erroLogin").textContent = "";
+      mostrar("telaSolicitacao");
+    } else {
+      document.getElementById("erroLogin").textContent = "E-mail ou senha inválidos.";
+    }
+  };
+
+  document.getElementById("btnEnviar").onclick = function () {
+    var servico = document.getElementById("servico").value;
+    var endereco = document.getElementById("endereco").value.trim();
+    var descricao = document.getElementById("descricao").value.trim();
+    if (!servico || !endereco || !descricao) {
+      document.getElementById("erroSolicitacao").textContent = "Preencha serviço, endereço e descrição.";
+      return;
+    }
+    // pequena espera para simular o tempo de resposta do portal
+    document.getElementById("btnEnviar").disabled = true;
+    setTimeout(function () {
+      document.getElementById("protocolo").textContent = proximoProtocolo();
+      document.getElementById("btnEnviar").disabled = false;
+      mostrar("telaConfirmacao");
+    }, 800);
+  };
+
+  document.getElementById("btnNovaSolicitacao").onclick = function () {
+    limparFormulario();
+    mostrar("telaSolicitacao");
+  };
+
+  // apaga a mensagem de erro quando o usuário volta a preencher
+  ["servico", "endereco", "descricao", "foto"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", function () {
+      document.getElementById("erroSolicitacao").textContent = "";
+    });
+  });
+
+  // se a página for recarregada, mantém o usuário logado
+  var sessao = lerSessao("logado");
+  if (sessao) {
+    document.getElementById("usuarioLogado").textContent = sessao;
+    mostrar("telaSolicitacao");
+  }
+</script>
+</body>
+</html>
